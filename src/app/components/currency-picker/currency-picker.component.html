@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-12">
+    <div class="d-table mx-auto" *ngIf="currencyList">
+      <div class="singleCurrencyWraper">
+        <input id="firstCurrencyAmount" type="number" min="0" [(ngModel)]="firstCurrencyAmount" (input)="countSecondCurrencyAmount()" class="form-control d-inline-block" />
+        <div ngbDropdown placement="bottom" class="d-inline-block">
+          <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>{{ currencyList[firstCurrencyIndex].code }}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <button *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickFirstCurrencyCode(i)">{{ currency.code }}</button>
+          </div>
+        </div>
+      </div>
+      <div class="singleCurrencyWraper">
+        <input id="secondCurrencyAmount" type="number" min="0" [(ngModel)]="secondCurrencyAmount" (input)="countFirstCurrencyAmount()" class="form-control d-inline-block" />
+        <div ngbDropdown placement="bottom" class="d-inline-block">
+          <button class="btn btn-outline-primary" id="dropdownBasic2" ngbDropdownToggle>{{ currencyList[secondCurrencyIndex].code }}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+            <button *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickSecondCurrencyCode(i)">{{ currency.code }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="d-table mx-auto text-center infoPanel" *ngIf="currencyList">
+      <p>Kurs wymiany: <b>{{ exchangeRate }}</b></p>
+      <p><b>{{ currencyList[firstCurrencyIndex].code }} - {{ currencyList[firstCurrencyIndex].currency }}</b> - ostatni notowany kurs: {{ firstCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}<br>
+      <b>{{ currencyList[secondCurrencyIndex].code }} -  {{ currencyList[secondCurrencyIndex].currency }}</b> - ostatni notowany kurs: {{ secondCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+.dropdown-menu.show {
+  max-height: 60vh;
+  overflow-y: scroll;
+}
+
+#firstCurrencyAmount,
+#secondCurrencyAmount {
+  width: 200px;
+  vertical-align: bottom;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.singleCurrencyWraper {
+  display: inline;
+}
+
+.infoPanel {
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 769px) {
+  .singleCurrencyWraper {
+    display: block;
+  }
+}

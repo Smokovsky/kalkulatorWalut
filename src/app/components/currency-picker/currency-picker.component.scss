@@ -1,0 +1,44 @@
+.dropdown-menu.show {
+  max-height: 60vh;
+  overflow-y: scroll;
+  min-width: 0;
+}
+
+.dropdown-menu.show::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+	border-radius: 3px;
+	background-color: #F5F5F5;
+}
+
+.dropdown-menu.show::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+
+.dropdown-menu.show::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #999;
+}
+
+#firstCurrencyAmount,
+#secondCurrencyAmount {
+  width: 200px;
+  vertical-align: bottom;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.singleCurrencyWraper {
+  display: inline;
+}
+
+.infoPanel {
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 769px) {
+  .singleCurrencyWraper {
+    display: block;
+  }
+}
