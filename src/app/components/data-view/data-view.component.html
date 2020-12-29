@@ -1,0 +1,18 @@
+<div class="row">
+  <table class="table" class="mx-auto" *ngIf="firstCurrency">
+    <thead>
+      <tr>
+        <th scope="col" class="date">Data</th>
+        <th scope="col" class="rate">Kurs {{ firstCurrency.code }}/{{ secondCurrency.code }}</th>
+        <th scope="col" class="change">Zmiana</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let record of exchangeRateHistory">
+        <td>{{ record.effectiveDate }}</td>
+        <td>{{ record.exchangeRate }}</td>
+        <td>{{ record.change }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

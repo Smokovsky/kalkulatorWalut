@@ -1,4 +1,7 @@
-<div class="row">
-  <h1 class="mx-auto">Kalkulator Walut Online</h1>
+<div class="container">
+  <div class="row">
+    <h1 class="mx-auto">Kalkulator Walut Online</h1>
+  </div>
+  <app-currency-picker (firstCurrency)='onChangeFirstCurrency($event)' (secondCurrency)='onChangeSecondCurrency($event)'></app-currency-picker>
+  <app-history-viewer [firstCurrency]="firstCurrency" [secondCurrency]="secondCurrency"></app-history-viewer>
 </div>
-<app-currency-picker (firstCurrencyCode)='onChangeFirstCurrency($event)' (secondCurrencyCode)='onChangeSecondCurrency($event)'></app-currency-picker>

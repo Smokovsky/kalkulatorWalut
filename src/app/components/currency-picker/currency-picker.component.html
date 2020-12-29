@@ -4,19 +4,22 @@
       <div class="singleCurrencyWraper">
         <input id="firstCurrencyAmount" type="number" min="0" [(ngModel)]="firstCurrencyAmount" (input)="countSecondCurrencyAmount()" class="form-control d-inline-block" />
         <div ngbDropdown placement="bottom" class="d-inline-block">
-          <button class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>{{ currencyList[firstCurrencyIndex].code }}</button>
+          <button class="btn btn-outline-primary picker" id="dropdownBasic1" ngbDropdownToggle>{{ currencyList[firstCurrencyIndex].code }}</button>
           <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-            <button *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickFirstCurrencyCode(i)">{{ currency.code }}</button>
+            <button class="item" *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickFirstCurrencyCode(i)" [disabled]="currency.code === currencyList[secondCurrencyIndex].code">{{ currency.code }}</button>
           </div>
         </div>
       </div>
       <div class="singleCurrencyWraper">
         <input id="secondCurrencyAmount" type="number" min="0" [(ngModel)]="secondCurrencyAmount" (input)="countFirstCurrencyAmount()" class="form-control d-inline-block" />
         <div ngbDropdown placement="bottom" class="d-inline-block">
-          <button class="btn btn-outline-primary" id="dropdownBasic2" ngbDropdownToggle>{{ currencyList[secondCurrencyIndex].code }}</button>
+          <button class="btn btn-outline-primary picker" id="dropdownBasic2" ngbDropdownToggle>{{ currencyList[secondCurrencyIndex].code }}</button>
           <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
-            <button *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickSecondCurrencyCode(i)">{{ currency.code }}</button>
+            <button class="item" *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickSecondCurrencyCode(i)" [disabled]="currency.code === currencyList[firstCurrencyIndex].code">{{ currency.code }}</button>
           </div>
+        </div>
+        <div class="swapCurrencies" (click)="swapCurrencies()">
+          <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="black" width="18px" height="18px"><rect fill="none" height="24" width="24"/><path d="M12,2C6.48,2,2,6.48,2,12c0,5.52,4.48,10,10,10s10-4.48,10-10C22,6.48,17.52,2,12,2z M12.06,19v-2.01c-0.02,0-0.04,0-0.06,0 c-1.28,0-2.56-0.49-3.54-1.46c-1.71-1.71-1.92-4.35-0.64-6.29l1.1,1.1c-0.71,1.33-0.53,3.01,0.59,4.13c0.7,0.7,1.62,1.03,2.54,1.01 v-2.14l2.83,2.83L12.06,19z M16.17,14.76l-1.1-1.1c0.71-1.33,0.53-3.01-0.59-4.13C13.79,8.84,12.9,8.5,12,8.5c-0.02,0-0.04,0-0.06,0 v2.15L9.11,7.83L11.94,5v2.02c1.3-0.02,2.61,0.45,3.6,1.45C17.24,10.17,17.45,12.82,16.17,14.76z"/></svg>
         </div>
       </div>
     </div>

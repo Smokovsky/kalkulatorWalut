@@ -1,0 +1,33 @@
+table {
+  min-width: 70%;
+  margin-bottom: 20px;
+}
+
+thead {
+  text-align: center;
+}
+
+td, th {
+  padding: 0 5px;
+  border: 1px solid #000;
+  vertical-align: middle;
+  text-align: center;
+}
+
+th.date {
+  width: 26%;
+}
+
+th.rate {
+  width: 37%;
+}
+
+th.change {
+  width: 37%;
+}
+
+@media only screen and (max-width: 769px) {
+  table {
+    min-width:90%;
+  }
+}

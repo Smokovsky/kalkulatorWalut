@@ -7,8 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./page.component.scss']
 })
 export class PageComponent implements OnInit {
-  firstCurrencyCode: string;
-  secondCurrencyCode: string;
+  firstCurrency: any;
+  secondCurrency: any;
 
   constructor() { }
 
@@ -16,12 +16,12 @@ export class PageComponent implements OnInit {
 
   }
 
-  onChangeFirstCurrency(currency: string) {
-    this.firstCurrencyCode = currency;
+  onChangeFirstCurrency(currency: any): void {
+    this.firstCurrency = currency;
   }
 
-  onChangeSecondCurrency(currency: string) {
-    this.secondCurrencyCode = currency;
+  onChangeSecondCurrency(currency: any): void {
+    this.secondCurrency = currency;
   }
 
 }

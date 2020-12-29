@@ -48,16 +48,16 @@ export class DataProviderService {
     return {rate: currencyRate, effectiveDate: currencyEffectiveDate};
   }
 
-  // async getCurrencyRateByDate(code: string, table: string, startDate: Date, endDate: Date): Promise<any[]> {
-  //   let currencyRates: any[];
-  //   const promiseCurrencyRate = this.httpClient.get(this.apiURL + `exchangerates/rates/${table}/${code}/${startDate}/${endDate}`)
-  //   .toPromise();
+  async getCurrencyHistoryByDate(code: string, table: string, startDate: string, endDate: string): Promise<any[]> {
+    let currencyRates: any[];
+    const promiseCurrencyRate = this.httpClient.get(this.apiURL + `exchangerates/rates/${table}/${code}/${startDate}/${endDate}`)
+    .toPromise();
 
-  //   await promiseCurrencyRate.then((value: any) => {
-  //     currencyRates = value.rates;
-  //   });
+    await promiseCurrencyRate.then((value: any) => {
+      currencyRates = value.rates;
+    });
 
-  //   return currencyRates;
-  // }
+    return currencyRates;
+  }
 
 }
