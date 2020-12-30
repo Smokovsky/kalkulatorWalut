@@ -1,0 +1,86 @@
+h2 {
+  width: 100%;
+  text-align: center;
+}
+
+p {
+  font-size: 1.1em;
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+a.selectTime {
+  display: block!important;
+}
+
+ul,
+ul li {
+  display: inline-block;
+  padding: 0 5px;
+  margin-bottom: 0;
+}
+
+.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.changeTime a,
+a.selectTime {
+  @extend p;
+  cursor: pointer;
+  color: #195aad;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.changeTime {
+  padding: 10px;
+  text-align: center;
+}
+
+.datePicker {
+  max-width: 70%;
+  display: block;
+  margin: auto;
+}
+
+.loadingCircle { 
+  width: 180px;
+  height: 180px;
+  margin-right: 5px;
+  border-color: rgb(20, 133, 226) rgba(226, 218, 218, 0.1) rgba(226, 218, 218, 0.1);
+  border-width: 10px;
+  border-style: solid;
+  border-radius: 50%;
+  animation: spinner .7s infinite linear;
+  display: inline-block;
+}
+
+@media only screen and (max-width: 769px) {
+  h2 {
+    font-size: 1.5em;
+  }
+  p {
+    font-size: 1em;
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg)
+  }
+  25%{
+    transform: rotate(90deg)
+  }
+  50%{
+    transform: rotate(180deg)
+  }
+  75%{
+    transform: rotate(270deg)
+  }
+  100%{
+    transform: rotate(360deg)
+  }
+}

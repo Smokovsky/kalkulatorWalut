@@ -1,4 +1,18 @@
 <div class="row">
   <h2 class="mx-auto">Historia notowań kursu</h2>
+  <div class="mx-auto changeTime">
+    <p>Ostatnie:</p>
+    <ul>
+      <li *ngFor="let period of timePeriods"><a [ngClass]="{'active': selectedTimePeriod === period}" (click)="selectLastDays(period)">{{ period }} dni</a></li>
+    </ul>
+  </div>
 </div>
-<app-data-view [firstCurrency]="firstCurrency" [secondCurrency]="secondCurrency" [exchangeRateHistory]="exchangeRateHistory"></app-data-view>
+<ng-container *ngIf="exchangeRateHistory[0]; else waiting">
+  <app-chart-view [firstCurrency]="firstCurrency" [secondCurrency]="secondCurrency" [exchangeRateHistory]="exchangeRateHistory"></app-chart-view>
+  <app-data-view [firstCurrency]="firstCurrency" [secondCurrency]="secondCurrency" [exchangeRateHistory]="exchangeRateHistory"></app-data-view>
+</ng-container>
+<ng-template #waiting>
+  <div class="row">
+    <div class="loadingCircle mx-auto"></div>
+ </div>
+</ng-template>

@@ -15,6 +15,8 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
 
   startDate = new Date().setDate(new Date().getDate() - 89);
   endDate = new Date();
+  timePeriods = [30, 60, 90, 180, 365];
+  selectedTimePeriod = 90;
 
   firstCurrencyHistory = [];
   secondCurrencyHistory = [];
@@ -27,12 +29,15 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
     if (changes.firstCurrency && changes.secondCurrency && this.firstCurrency && this.secondCurrency) {
       await this.saveCurrencyHistory(1);
       await this.saveCurrencyHistory(2);
+      this.combineCurrencyRates();
       this.countExchangeRates();
     } else if (changes.firstCurrency && this.firstCurrency) {
       await this.saveCurrencyHistory(1);
+      this.combineCurrencyRates();
       this.countExchangeRates();
     } else if (changes.secondCurrency && this.secondCurrency) {
       await this.saveCurrencyHistory(2);
+      this.combineCurrencyRates();
       this.countExchangeRates();
     }
   }
@@ -60,6 +65,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
   }
 
   async saveCurrencyHistory(currency: number): Promise<void> {
+    this.exchangeRateHistory = [];
     if (currency === 1) {
     await this.getCurrencyHistory(this.firstCurrency.code, this.firstCurrency.table,
       this.datePipe.transform(this.startDate, 'yyyy-MM-dd'),
@@ -77,7 +83,6 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
         });
       });
     }
-    this.combineCurrencyRates();
   }
 
   countExchangeRates(): void {
@@ -160,6 +165,22 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
       }
 
     }
+  }
+
+  async selectLastDays(days: number): Promise<void> {
+    this.selectedTimePeriod = days;
+    this.exchangeRateHistory = [];
+    this.startDate = new Date().setDate(new Date().getDate() - days);
+    this.endDate = new Date();
+    await this.saveCurrencyHistory(1);
+    await this.saveCurrencyHistory(2);
+    this.combineCurrencyRates();
+    this.countExchangeRates();
+  }
+
+  async selectTimePeriod(): Promise<void> {
+    this.selectedTimePeriod = 0;
+    console.log('Under construction...');
   }
 
 }

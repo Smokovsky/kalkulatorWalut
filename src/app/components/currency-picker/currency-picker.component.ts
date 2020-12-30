@@ -40,7 +40,6 @@ export class CurrencyPickerComponent implements OnInit {
     this.secondCurrency.emit({code: this.currencyList[this.secondCurrencyIndex].code,
                             table: this.currencyList[this.secondCurrencyIndex].table});
 
-
     await this.dataProviderService.getCurrencyRate(
       this.currencyList[this.firstCurrencyIndex].code,
       this.currencyList[this.firstCurrencyIndex].table
@@ -90,12 +89,12 @@ export class CurrencyPickerComponent implements OnInit {
 
   countFirstCurrencyAmount(): void {
     this.firstCurrencyAmount = this.secondCurrencyAmount * (1 / this.exchangeRate);
-    this.firstCurrencyAmount = parseFloat(this.firstCurrencyAmount.toFixed(5));
+    this.firstCurrencyAmount = parseFloat(this.firstCurrencyAmount.toFixed(6));
   }
 
   countSecondCurrencyAmount(): void {
     this.secondCurrencyAmount = this.firstCurrencyAmount * this.exchangeRate;
-    this.secondCurrencyAmount = parseFloat(this.secondCurrencyAmount.toFixed(5));
+    this.secondCurrencyAmount = parseFloat(this.secondCurrencyAmount.toFixed(6));
   }
 
   swapCurrencies(): void {

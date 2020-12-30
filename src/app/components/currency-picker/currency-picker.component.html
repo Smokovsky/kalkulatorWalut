@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-12">
-    <div class="d-table mx-auto" *ngIf="currencyList">
+    <div class="d-table mx-auto currencyInputs" *ngIf="currencyList">
       <div class="singleCurrencyWraper">
         <input id="firstCurrencyAmount" type="number" min="0" [(ngModel)]="firstCurrencyAmount" (input)="countSecondCurrencyAmount()" class="form-control d-inline-block" />
         <div ngbDropdown placement="bottom" class="d-inline-block">
@@ -26,7 +26,7 @@
   </div>
   <div class="col-12">
     <div class="d-table mx-auto text-center infoPanel" *ngIf="currencyList">
-      <p>Kurs wymiany: <b>{{ exchangeRate }}</b></p>
+      <p>Kurs wymiany: <b>{{ exchangeRate | number: '1.1-6' }}</b></p>
       <p><b>{{ currencyList[firstCurrencyIndex].code }} - {{ currencyList[firstCurrencyIndex].currency }}</b> - ostatni notowany kurs: {{ firstCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}<br>
       <b>{{ currencyList[secondCurrencyIndex].code }} -  {{ currencyList[secondCurrencyIndex].currency }}</b> - ostatni notowany kurs: {{ secondCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}</p>
     </div>

@@ -53,12 +53,21 @@ button.item {
   svg {
     width: 100%;
     height: 100%;
-    fill: #1c76ec!important;
+    fill: #1c76ec;
     cursor: pointer;
   }
 }
 
 @media only screen and (max-width: 769px) {
+   p {
+    font-size: 0.9em;
+   }
+   .currencyInputs {
+    padding-left: 30px;
+   }
+   .row {
+    padding-top: 10px;
+  }
   .singleCurrencyWraper {
     display: block;
   }

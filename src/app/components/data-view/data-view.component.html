@@ -1,18 +1,32 @@
-<div class="row">
-  <table class="table" class="mx-auto" *ngIf="firstCurrency">
-    <thead>
-      <tr>
-        <th scope="col" class="date">Data</th>
-        <th scope="col" class="rate">Kurs {{ firstCurrency.code }}/{{ secondCurrency.code }}</th>
-        <th scope="col" class="change">Zmiana</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let record of exchangeRateHistory">
-        <td>{{ record.effectiveDate }}</td>
-        <td>{{ record.exchangeRate }}</td>
-        <td>{{ record.change }}</td>
-      </tr>
-    </tbody>
-  </table>
+<div class="row" *ngIf="dataReady">
+  <div class="col-sm-12 col-md-10 mx-auto">
+    <h3>Tabela zmian wartości kursu {{ firstCurrency.code }}/{{ secondCurrency.code }}</h3>
+    <table class="table" class="mx-auto">
+      <thead>
+        <tr>
+          <th class="date">Data</th>
+          <th class="rate">Kurs {{ firstCurrency.code }}/{{ secondCurrency.code }}</th>
+          <th class="change">Zmiana</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of exchangeRateHistory">
+          <td><span>{{ record.effectiveDate }}</span></td>
+          <td><span>{{ record.exchangeRate | number: '1.6' }}</span></td>
+          <td>
+            <span>{{ record.change > 0 ? '+' + (record.change | number: '1.6') : (record.change | number: '1.6') }}</span>
+            <ng-container *ngIf="record.change > 0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#148e08" width="24px" height="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 14l5-5 5 5z"/></svg>
+            </ng-container>
+            <ng-container *ngIf="0 > record.change">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#c41919" width="24px" height="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 10l5 5 5-5z"/></svg>
+            </ng-container>
+            <ng-container *ngIf="0 === record.change">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"><rect x="9" y="10" width="2px" height="2px" style="stroke:rgb(117, 117, 117);stroke-width:5;fill-opacity:0.1;stroke-opacity:0.9" /></svg>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

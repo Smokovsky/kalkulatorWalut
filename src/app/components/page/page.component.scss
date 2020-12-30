@@ -1,3 +1,7 @@
+h1 {
+  text-align: center;
+}
+
 .dropdown-menu.show {
   max-height: 60vh;
   overflow-y: scroll;
@@ -20,6 +24,9 @@
 }
 
 @media only screen and (max-width: 769px) {
+  h1 {
+    font-size: 2em;
+  }
   .singleCurrencyWraper {
     display: block;
   }
