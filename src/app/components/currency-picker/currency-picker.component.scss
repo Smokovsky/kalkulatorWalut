@@ -1,3 +1,9 @@
+@import "src/styles.scss";
+
+.infoPanel p {
+  display: block;
+}
+
 .dropdown-menu.show {
   max-height: 60vh;
   overflow-y: scroll;
@@ -35,10 +41,6 @@ button.item {
   }
 }
 
-.singleCurrencyWraper {
-  display: inline;
-}
-
 .infoPanel {
   margin-top: 10px;
 }
@@ -53,23 +55,17 @@ button.item {
   svg {
     width: 100%;
     height: 100%;
-    fill: #1c76ec;
+    fill: $primaryColor;
     cursor: pointer;
   }
 }
 
-@media only screen and (max-width: 769px) {
-   p {
-    font-size: 0.9em;
-   }
-   .currencyInputs {
+@media only screen and (max-width: 767px) {
+  .currencyInputs {
     padding-left: 30px;
-   }
-   .row {
-    padding-top: 10px;
   }
-  .singleCurrencyWraper {
-    display: block;
+  .row {
+    padding-top: 10px;
   }
 }
 

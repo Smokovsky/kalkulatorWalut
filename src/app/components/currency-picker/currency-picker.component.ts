@@ -43,6 +43,10 @@ export class CurrencyPickerComponent implements OnInit {
     await this.getCurrency(2, this.secondCurrencyIndex);
   }
 
+  countExchangeRate(): void {
+    this.exchangeRate = this.firstCurrencyRate * (1 / this.secondCurrencyRate);
+  }
+
  /**
   * @param currency: accepts value 1 or 2, depends on which currency is to change
   * @Param index: index of currency in currencyList
@@ -54,7 +58,7 @@ export class CurrencyPickerComponent implements OnInit {
       this.secondCurrencyIndex = index;
     }
     await this.getCurrency(currency, index);
-    this.countFirstCurrencyAmount();
+    this.countCurrencyAmount(currency === 1 ? 2 : 1);
   }
 
  /**
@@ -62,51 +66,66 @@ export class CurrencyPickerComponent implements OnInit {
   * @Param newCurrencyIndex: index of currency in currencyList
   */
   async getCurrency(currency: number, newCurrencyIndex: number): Promise<void> {
-    await this.dataProviderService.getCurrencyRate(
-      this.currencyList[newCurrencyIndex].code,
-      this.currencyList[newCurrencyIndex].table
-    ).then(result => {
-      if (currency === 1) {
-        this.firstCurrencyRate = result.rate;
-        this.firstCurrencyEffectiveDate = result.effectiveDate;
-        this.firstCurrency.emit({code: this.currencyList[this.firstCurrencyIndex].code,
-                                table: this.currencyList[this.firstCurrencyIndex].table});
-      } else if (currency === 2) {
-        this.secondCurrencyRate = result.rate;
-        this.secondCurrencyEffectiveDate = result.effectiveDate;
-        this.secondCurrency.emit({code: this.currencyList[this.secondCurrencyIndex].code,
-                                 table: this.currencyList[this.secondCurrencyIndex].table});
-      }
-    });
+
+    if (this.currencyList[newCurrencyIndex].code === 'PLN') {
+      this.firstCurrencyRate = 1;
+      this.firstCurrencyEffectiveDate = new Date();
+      this.emitCurrency(currency);
+
+    } else {
+      await this.dataProviderService.getCurrencyRate(
+        this.currencyList[newCurrencyIndex].code,
+        this.currencyList[newCurrencyIndex].table
+      ).then(result => {
+        if (currency === 1) {
+          this.firstCurrencyRate = result.rate;
+          this.firstCurrencyEffectiveDate = result.effectiveDate;
+          this.emitCurrency(1);
+        } else if (currency === 2) {
+          this.secondCurrencyRate = result.rate;
+          this.secondCurrencyEffectiveDate = result.effectiveDate;
+          this.emitCurrency(2);
+        }
+      });
+    }
     if (this.firstCurrencyRate && this.secondCurrencyRate) {
       this.countExchangeRate();
     }
   }
 
-  countExchangeRate(): void {
-    this.exchangeRate = this.firstCurrencyRate * (1 / this.secondCurrencyRate);
+ /**
+  * @param currency: accepts value 1 or 2, depends on which currency is to emit
+  */
+   emitCurrency(currency: number): void {
+    if (currency === 1) {
+      this.firstCurrency.emit({code: this.currencyList[this.firstCurrencyIndex].code,
+                              table: this.currencyList[this.firstCurrencyIndex].table});
+    } else if (currency === 2) {
+      this.secondCurrency.emit({code: this.currencyList[this.secondCurrencyIndex].code,
+                               table: this.currencyList[this.secondCurrencyIndex].table});
+    }
   }
 
-  countFirstCurrencyAmount(): void {
-    this.firstCurrencyAmount = this.secondCurrencyAmount * (1 / this.exchangeRate);
-    this.firstCurrencyAmount = parseFloat(this.firstCurrencyAmount.toFixed(6));
-  }
-
-  countSecondCurrencyAmount(): void {
-    this.secondCurrencyAmount = this.firstCurrencyAmount * this.exchangeRate;
-    this.secondCurrencyAmount = parseFloat(this.secondCurrencyAmount.toFixed(6));
+ /**
+  * @param currency: accepts value 1 or 2, depends on which currency amount is to count
+  */
+  countCurrencyAmount(currency: number): void {
+    if (currency === 1) {
+      this.firstCurrencyAmount = this.secondCurrencyAmount * (1 / this.exchangeRate);
+      this.firstCurrencyAmount = parseFloat(this.firstCurrencyAmount.toFixed(6));
+    } else if (currency === 2) {
+      this.secondCurrencyAmount = this.firstCurrencyAmount * this.exchangeRate;
+      this.secondCurrencyAmount = parseFloat(this.secondCurrencyAmount.toFixed(6));
+    }
   }
 
   swapCurrencies(): void {
     this.firstCurrencyIndex = [this.secondCurrencyIndex, this.secondCurrencyIndex = this.firstCurrencyIndex][0];
     this.firstCurrencyRate = [this.secondCurrencyRate, this.secondCurrencyRate = this.firstCurrencyRate][0];
     this.countExchangeRate();
-    this.countSecondCurrencyAmount();
-
-    this.firstCurrency.emit({code: this.currencyList[this.firstCurrencyIndex].code,
-      table: this.currencyList[this.firstCurrencyIndex].table});
-    this.secondCurrency.emit({code: this.currencyList[this.secondCurrencyIndex].code,
-        table: this.currencyList[this.secondCurrencyIndex].table});
+    this.countCurrencyAmount(2);
+    this.emitCurrency(1);
+    this.emitCurrency(2);
   }
 
 }

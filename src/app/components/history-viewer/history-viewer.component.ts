@@ -9,6 +9,7 @@ import { DataProviderService } from 'src/app/services/data-provider.service';
   providers: [ DatePipe ]
 })
 export class HistoryViewerComponent implements OnInit, OnChanges {
+
   @Input()
   firstCurrency: any;
   @Input()
@@ -28,8 +29,9 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
 
   shortTimeRangeError = false;
   exceededTimeRangeError = false;
+  belowMinDateError = false;
 
-  datePickerMinValue = new Date('2008/1/1');
+  datePickerMinValue = new Date('1/1/2008');
   datePickerMaxValue = new Date();
 
   constructor(private datePipe: DatePipe,
@@ -41,16 +43,10 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
     if (changes.firstCurrency && changes.secondCurrency && this.firstCurrency && this.secondCurrency) {
       await this.saveCurrencyHistory(1);
       await this.saveCurrencyHistory(2);
-      this.combineCurrencyRates();
-      this.countExchangeRates();
     } else if (changes.firstCurrency && this.firstCurrency) {
       await this.saveCurrencyHistory(1);
-      this.combineCurrencyRates();
-      this.countExchangeRates();
     } else if (changes.secondCurrency && this.secondCurrency) {
       await this.saveCurrencyHistory(2);
-      this.combineCurrencyRates();
-      this.countExchangeRates();
     }
   }
 
@@ -98,6 +94,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
         });
       });
     }
+    this.combineCurrencyRates();
   }
 
   countExchangeRates(): void {
@@ -137,47 +134,50 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
   }
 
   combineCurrencyRates(): void {
-    this.exchangeRateHistory = [];
-    let start = new Date(this.startDate);
-    const finish = new Date(this.endDate);
+    if (this.firstCurrencyHistory.length > 0 && this.secondCurrencyHistory.length > 0) {
+      this.exchangeRateHistory = [];
+      let start = new Date(this.startDate);
+      const finish = new Date(this.endDate);
 
-    if (start <= finish) {
-      while (start <= finish) {
-        const firstCurrencyDailyRate = this.firstCurrencyHistory.filter(record => {
-          return record.effectiveDate === this.datePipe.transform(start, 'yyyy-MM-dd');
-        });
-        const secondCurrencyDailyRate = this.secondCurrencyHistory.filter(record => {
-          return record.effectiveDate === this.datePipe.transform(start, 'yyyy-MM-dd');
-        });
+      if (start <= finish) {
+        while (start <= finish) {
+          const firstCurrencyDailyRate = this.firstCurrencyHistory.filter(record => {
+            return record.effectiveDate === this.datePipe.transform(start, 'yyyy-MM-dd');
+          });
+          const secondCurrencyDailyRate = this.secondCurrencyHistory.filter(record => {
+            return record.effectiveDate === this.datePipe.transform(start, 'yyyy-MM-dd');
+          });
 
-        if (firstCurrencyDailyRate[0] || secondCurrencyDailyRate[0]) {
-          const resultObject: any = {effectiveDate: new Date()};
-          resultObject.effectiveDate = this.datePipe.transform(start, 'yyyy-MM-dd');
-          if (firstCurrencyDailyRate[0] && firstCurrencyDailyRate[0].firstCurrencyRate) {
-            resultObject.firstCurrencyRate = firstCurrencyDailyRate[0].firstCurrencyRate;
+          if (firstCurrencyDailyRate[0] || secondCurrencyDailyRate[0]) {
+            const resultObject: any = {effectiveDate: new Date()};
+            resultObject.effectiveDate = this.datePipe.transform(start, 'yyyy-MM-dd');
+            if (firstCurrencyDailyRate[0] && firstCurrencyDailyRate[0].firstCurrencyRate) {
+              resultObject.firstCurrencyRate = firstCurrencyDailyRate[0].firstCurrencyRate;
+            }
+            if (secondCurrencyDailyRate[0] && secondCurrencyDailyRate[0].secondCurrencyRate) {
+              resultObject.secondCurrencyRate = secondCurrencyDailyRate[0].secondCurrencyRate;
+            }
+            this.exchangeRateHistory.push(resultObject);
           }
-          if (secondCurrencyDailyRate[0] && secondCurrencyDailyRate[0].secondCurrencyRate) {
-            resultObject.secondCurrencyRate = secondCurrencyDailyRate[0].secondCurrencyRate;
-          }
-          this.exchangeRateHistory.push(resultObject);
+          start = new Date(start.setDate(start.getDate() + 1));
         }
-        start = new Date(start.setDate(start.getDate() + 1));
-      }
 
-      if (this.firstCurrency.code === 'PLN' || this.secondCurrency.code === 'PLN') {
-        const deleteRecords = [];
-        this.exchangeRateHistory.forEach((element, index) => {
-          if (!(element.firstCurrencyRate && element.secondCurrencyRate)) {
-            deleteRecords.push(index);
-          }
-        });
-        if (deleteRecords.length > 0) {
-          deleteRecords.reverse();
-          for (const record of deleteRecords) {
-            this.exchangeRateHistory.splice(record, 1);
+        if (this.firstCurrency.code === 'PLN' || this.secondCurrency.code === 'PLN') {
+          const deleteRecords = [];
+          this.exchangeRateHistory.forEach((element, index) => {
+            if (!(element.firstCurrencyRate && element.secondCurrencyRate)) {
+              deleteRecords.push(index);
+            }
+          });
+          if (deleteRecords.length > 0) {
+            deleteRecords.reverse();
+            for (const record of deleteRecords) {
+              this.exchangeRateHistory.splice(record, 1);
+            }
           }
         }
       }
+      this.countExchangeRates();
     }
   }
 
@@ -193,28 +193,16 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
   }
 
   async selectTimePeriod(): Promise<void> {
+    this.firstCurrencyHistory = [];
+    this.secondCurrencyHistory = [];
     await this.saveCurrencyHistory(1);
     await this.saveCurrencyHistory(2);
-    this.combineCurrencyRates();
-    this.countExchangeRates();
-    this.shortTimeRangeError = false;
-    this.exceededTimeRangeError = false;
-  }
-
-  clearDatePicker(): void {
-    if (!this.shortTimeRangeError && !this.exceededTimeRangeError && (this.pickedStartDate && this.pickedEndDate)) {
-      this.selectLastDays(90);
-    }
-    this.pickedStartDate = null;
-    this.pickedEndDate = null;
-    this.shortTimeRangeError = false;
-    this.exceededTimeRangeError = false;
+    this.clearErrors();
   }
 
   async datePickerChanged(): Promise<void> {
     await this.sleep(10);
-    this.shortTimeRangeError = false;
-    this.exceededTimeRangeError = false;
+    this.clearErrors();
     const minRange = new Date(this.pickedStartDate);
     const maxRange = new Date(this.pickedStartDate);
     minRange.setDate(minRange.getDate() + 13);
@@ -222,10 +210,16 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
     if (this.pickedStartDate && this.pickedEndDate && this.pickedEndDate !== null && this.pickedStartDate !== null) {
       if (this.pickedEndDate > minRange) {
         if (!(this.pickedEndDate > maxRange)) {
-          this.selectedTimePeriod = 0;
-          this.startDate = this.pickedStartDate;
-          this.endDate = this.pickedEndDate;
-          await this.selectTimePeriod();
+          if (this.pickedStartDate >= this.datePickerMinValue) {
+
+            this.selectedTimePeriod = 0;
+            this.startDate = this.pickedStartDate;
+            this.endDate = this.pickedEndDate;
+            await this.selectTimePeriod();
+
+          } else {
+            this.belowMinDateError = true;
+          }
         } else {
           this.exceededTimeRangeError = true;
         }
@@ -233,6 +227,22 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
         this.shortTimeRangeError = true;
       }
     }
+  }
+
+  clearDatePicker(): void {
+    if (!this.shortTimeRangeError && !this.exceededTimeRangeError && !this.belowMinDateError
+      && (this.pickedStartDate && this.pickedEndDate)) {
+      this.selectLastDays(90);
+    }
+    this.pickedStartDate = null;
+    this.pickedEndDate = null;
+    this.clearErrors();
+  }
+
+  clearErrors(): void {
+    this.shortTimeRangeError = false;
+    this.exceededTimeRangeError = false;
+    this.belowMinDateError = false;
   }
 
   sleep(ms: number): any {

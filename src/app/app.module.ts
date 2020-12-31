@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { ChartsModule } from 'ng2-charts';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
@@ -13,9 +13,11 @@ import { HistoryViewerComponent } from './components/history-viewer/history-view
 import { DatePipe } from '@angular/common';
 import { DataViewComponent } from './components/data-view/data-view.component';
 import { ChartViewComponent } from './components/chart-view/chart-view.component';
-import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatDateAdapter } from './adapters/mat-date.adapter';
 
 @NgModule({
   declarations: [
@@ -35,10 +37,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatNativeDateModule,
     NoopAnimationsModule,
     MatFormFieldModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatMomentDateModule
   ],
   providers: [
-    DatePipe
+    DatePipe,
+    MatDateAdapter,
+    { provide: DateAdapter, useClass: MatDateAdapter }
   ],
   bootstrap: [AppComponent]
 })

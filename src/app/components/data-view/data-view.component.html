@@ -2,7 +2,7 @@
   <div class="col-sm-12 col-md-10 mx-auto">
     <h3>Tabela zmian wartości kursu {{ firstCurrency.code }}/{{ secondCurrency.code }}</h3>
     <table class="table" class="mx-auto">
-      <thead>
+      <thead class="text-center">
         <tr>
           <th class="date">Data</th>
           <th class="rate">Kurs {{ firstCurrency.code }}/{{ secondCurrency.code }}</th>
@@ -11,10 +11,10 @@
       </thead>
       <tbody>
         <tr *ngFor="let record of exchangeRateHistory">
-          <td><span>{{ record.effectiveDate }}</span></td>
-          <td><span>{{ record.exchangeRate | number: '1.6' }}</span></td>
+          <td><p>{{ record.effectiveDate }}</p></td>
+          <td><p>{{ record.exchangeRate | number: '1.6' }}</p></td>
           <td>
-            <span>{{ record.change > 0 ? '+' + (record.change | number: '1.6') : (record.change | number: '1.6') }}</span>
+            <p>{{ record.change > 0 ? '+' + (record.change | number: '1.6') : (record.change | number: '1.6') }}</p>
             <ng-container *ngIf="record.change > 0">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#148e08" width="24px" height="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 14l5-5 5 5z"/></svg>
             </ng-container>

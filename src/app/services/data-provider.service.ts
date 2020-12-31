@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class DataProviderService {
-  apiURL = 'http://api.nbp.pl/api/';
+  apiURL = 'https://api.nbp.pl/api/';
 
   constructor(private httpClient: HttpClient) { }
 
@@ -27,7 +27,7 @@ export class DataProviderService {
     const currencyCodes = currencyList.map(data => {
       return {code: data.code, currency: data.currency, table: data.table};
     });
-    currencyCodes.push({code: 'PLN', currency: 'złoty (Polska)', table: 'none'});
+    currencyCodes.push({code: 'PLN', currency: 'złoty polski', table: 'none'});
 
     return currencyCodes;
   }
@@ -35,16 +35,11 @@ export class DataProviderService {
   async getCurrencyRate(code: string, table: string): Promise<any> {
     let currencyRate: number;
     let currencyEffectiveDate: Date;
-    if (code === 'PLN') {
-      currencyRate = 1;
-      currencyEffectiveDate = new Date();
-    } else {
-      const promiseCurrencyRate = this.httpClient.get(this.apiURL + `exchangerates/rates/${table}/${code}`).toPromise();
-      await promiseCurrencyRate.then((value: any) => {
-        currencyRate = value.rates[0].mid;
-        currencyEffectiveDate = value.rates[0].effectiveDate;
-      });
-    }
+    const promiseCurrencyRate = this.httpClient.get(this.apiURL + `exchangerates/rates/${table}/${code}`).toPromise();
+    await promiseCurrencyRate.then((value: any) => {
+      currencyRate = value.rates[0].mid;
+      currencyEffectiveDate = value.rates[0].effectiveDate;
+    });
     return {rate: currencyRate, effectiveDate: currencyEffectiveDate};
   }
 
