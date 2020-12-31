@@ -4,18 +4,18 @@
       <div class="singleCurrencyWraper">
         <input id="firstCurrencyAmount" type="number" min="0" [(ngModel)]="firstCurrencyAmount" (input)="countSecondCurrencyAmount()" class="form-control d-inline-block" />
         <div ngbDropdown placement="bottom" class="d-inline-block">
-          <button class="btn btn-outline-primary picker" id="dropdownBasic1" ngbDropdownToggle>{{ currencyList[firstCurrencyIndex].code }}</button>
-          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-            <button class="item" *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickFirstCurrencyCode(i)" [disabled]="currency.code === currencyList[secondCurrencyIndex].code">{{ currency.code }}</button>
+          <button class="btn btn-outline-primary picker" id="firstCurrencyDropdown" ngbDropdownToggle>{{ currencyList[firstCurrencyIndex].code }}</button>
+          <div ngbDropdownMenu aria-labelledby="firstCurrencyDropdown">
+            <button class="item" *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickCurrencyCode(1, i)" [disabled]="currency.code === currencyList[secondCurrencyIndex].code">{{ currency.code }}</button>
           </div>
         </div>
       </div>
       <div class="singleCurrencyWraper">
         <input id="secondCurrencyAmount" type="number" min="0" [(ngModel)]="secondCurrencyAmount" (input)="countFirstCurrencyAmount()" class="form-control d-inline-block" />
         <div ngbDropdown placement="bottom" class="d-inline-block">
-          <button class="btn btn-outline-primary picker" id="dropdownBasic2" ngbDropdownToggle>{{ currencyList[secondCurrencyIndex].code }}</button>
-          <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
-            <button class="item" *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickSecondCurrencyCode(i)" [disabled]="currency.code === currencyList[firstCurrencyIndex].code">{{ currency.code }}</button>
+          <button class="btn btn-outline-primary picker" id="secondCurrencyDropdown" ngbDropdownToggle>{{ currencyList[secondCurrencyIndex].code }}</button>
+          <div ngbDropdownMenu aria-labelledby="secondCurrencyDropdown">
+            <button class="item" *ngFor="let currency of currencyList; let i = index" ngbDropdownItem (click)="onClickCurrencyCode(2, i)" [disabled]="currency.code === currencyList[firstCurrencyIndex].code">{{ currency.code }}</button>
           </div>
         </div>
         <div class="swapCurrencies" (click)="swapCurrencies()">

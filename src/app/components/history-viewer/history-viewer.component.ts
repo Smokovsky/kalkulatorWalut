@@ -5,7 +5,8 @@ import { DataProviderService } from 'src/app/services/data-provider.service';
 @Component({
   selector: 'app-history-viewer',
   templateUrl: './history-viewer.component.html',
-  styleUrls: ['./history-viewer.component.scss']
+  styleUrls: ['./history-viewer.component.scss'],
+  providers: [ DatePipe ]
 })
 export class HistoryViewerComponent implements OnInit, OnChanges {
   @Input()
@@ -13,7 +14,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
   @Input()
   secondCurrency: any;
 
-  startDate = new Date().setDate(new Date().getDate() - 89);
+  startDate: Date = new Date();
   endDate = new Date();
   timePeriods = [30, 60, 90, 180, 365];
   selectedTimePeriod = 90;
@@ -22,8 +23,19 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
   secondCurrencyHistory = [];
   exchangeRateHistory = [];
 
+  pickedStartDate: Date;
+  pickedEndDate: Date;
+
+  shortTimeRangeError = false;
+  exceededTimeRangeError = false;
+
+  datePickerMinValue = new Date('2008/1/1');
+  datePickerMaxValue = new Date();
+
   constructor(private datePipe: DatePipe,
-              private dataProviderService: DataProviderService) { }
+              private dataProviderService: DataProviderService) {
+    this.startDate.setDate(new Date().getDate() - 90);
+  }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.firstCurrency && changes.secondCurrency && this.firstCurrency && this.secondCurrency) {
@@ -64,6 +76,9 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
     return response;
   }
 
+  /**
+   * @param currency: accepts value 1 or 2, depends on which currency history is to save
+   */
   async saveCurrencyHistory(currency: number): Promise<void> {
     this.exchangeRateHistory = [];
     if (currency === 1) {
@@ -109,7 +124,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
       if (day.secondCurrencyRate) {
         lastKnownValueSecond = day.secondCurrencyRate;
       }
-      day.exchangeRate = lastKnownValueSecond * (1 / lastKnownValueFirst);
+      day.exchangeRate = lastKnownValueFirst * (1 / lastKnownValueSecond);
       day.exchangeRate = parseFloat(day.exchangeRate.toFixed(6));
 
       if (index !== 0) {
@@ -163,24 +178,67 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
           }
         }
       }
-
     }
   }
 
   async selectLastDays(days: number): Promise<void> {
     this.selectedTimePeriod = days;
+    this.pickedStartDate = null;
+    this.pickedEndDate = null;
     this.exchangeRateHistory = [];
-    this.startDate = new Date().setDate(new Date().getDate() - days);
+    this.startDate = new Date();
+    this.startDate.setDate(new Date().getDate() - days);
     this.endDate = new Date();
+    this.selectTimePeriod();
+  }
+
+  async selectTimePeriod(): Promise<void> {
     await this.saveCurrencyHistory(1);
     await this.saveCurrencyHistory(2);
     this.combineCurrencyRates();
     this.countExchangeRates();
+    this.shortTimeRangeError = false;
+    this.exceededTimeRangeError = false;
   }
 
-  async selectTimePeriod(): Promise<void> {
-    this.selectedTimePeriod = 0;
-    console.log('Under construction...');
+  clearDatePicker(): void {
+    if (!this.shortTimeRangeError && !this.exceededTimeRangeError && (this.pickedStartDate && this.pickedEndDate)) {
+      this.selectLastDays(90);
+    }
+    this.pickedStartDate = null;
+    this.pickedEndDate = null;
+    this.shortTimeRangeError = false;
+    this.exceededTimeRangeError = false;
+  }
+
+  async datePickerChanged(): Promise<void> {
+    await this.sleep(10);
+    this.shortTimeRangeError = false;
+    this.exceededTimeRangeError = false;
+    const minRange = new Date(this.pickedStartDate);
+    const maxRange = new Date(this.pickedStartDate);
+    minRange.setDate(minRange.getDate() + 13);
+    maxRange.setDate(maxRange.getDate() + 365);
+    if (this.pickedStartDate && this.pickedEndDate && this.pickedEndDate !== null && this.pickedStartDate !== null) {
+      if (this.pickedEndDate > minRange) {
+        if (!(this.pickedEndDate > maxRange)) {
+          this.selectedTimePeriod = 0;
+          this.startDate = this.pickedStartDate;
+          this.endDate = this.pickedEndDate;
+          await this.selectTimePeriod();
+        } else {
+          this.exceededTimeRangeError = true;
+        }
+      } else {
+        this.shortTimeRangeError = true;
+      }
+    }
+  }
+
+  sleep(ms: number): any {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
 
 }

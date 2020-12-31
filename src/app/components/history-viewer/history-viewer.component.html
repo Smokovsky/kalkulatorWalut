@@ -1,10 +1,30 @@
 <div class="row">
-  <h2 class="mx-auto">Historia notowań kursu</h2>
-  <div class="mx-auto changeTime">
-    <p>Ostatnie:</p>
-    <ul>
-      <li *ngFor="let period of timePeriods"><a [ngClass]="{'active': selectedTimePeriod === period}" (click)="selectLastDays(period)">{{ period }} dni</a></li>
-    </ul>
+  <div class="col-12">
+    <h2 class="mx-auto">Historia notowań kursu</h2>
+    <div class="mx-auto changeTime">
+      <p>Ostatnie:</p>
+      <ul>
+        <li *ngFor="let period of timePeriods"><a [ngClass]="{'active': selectedTimePeriod === period}" (click)="selectLastDays(period)">{{ period }} dni</a></li>
+      </ul>
+    </div>
+    <div class="col-12 text-center mb-4">
+      <mat-form-field appearance="fill" class="d-inline-block datePicker">
+        <mat-label>Wybierz własny zakres</mat-label>
+        <mat-date-range-input [min]="datePickerMinValue" [max]="datePickerMaxValue" [rangePicker]="picker" >
+          <input matStartDate (dateChange)="datePickerChanged()" [(ngModel)]="pickedStartDate" placeholder="Od">
+          <input matEndDate (dateChange)="datePickerChanged()" [(ngModel)]="pickedEndDate" placeholder="do">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+      <a (click)="clearDatePicker()" *ngIf="pickedStartDate || pickedEndDate">
+        <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="#0d3969" class="bi bi-x d-inline-block" viewBox="0 0 16 16">
+          <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+      </a>
+      <p class="d-block mx-auto timeRangeError" *ngIf="shortTimeRangeError">Wybierz zakres obejmujący minimum 14 dni.</p>
+      <p class="d-block mx-auto timeRangeError" *ngIf="exceededTimeRangeError">Wybierz zakres obejmujący maksimum 365 dni.</p>
+    </div>
   </div>
 </div>
 <ng-container *ngIf="exchangeRateHistory[0]; else waiting">

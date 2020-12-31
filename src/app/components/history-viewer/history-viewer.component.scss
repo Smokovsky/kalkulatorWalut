@@ -1,12 +1,22 @@
+$primaryColor: #195aad;
+
 h2 {
   width: 100%;
   text-align: center;
+}
+
+svg {
+  margin-bottom: .8em;
 }
 
 p {
   font-size: 1.1em;
   display: inline-block;
   margin-bottom: 0;
+}
+
+a {
+  cursor: pointer;
 }
 
 a.selectTime {
@@ -28,8 +38,8 @@ ul li {
 .changeTime a,
 a.selectTime {
   @extend p;
-  cursor: pointer;
-  color: #195aad;
+  @extend a;
+  color: $primaryColor;
   &:hover {
     text-decoration: underline;
   }
@@ -58,6 +68,13 @@ a.selectTime {
   display: inline-block;
 }
 
+.timeRangeError {
+  padding: 0;
+  margin: 0;
+  color: red;
+  font-size: .7em;
+}
+
 @media only screen and (max-width: 769px) {
   h2 {
     font-size: 1.5em;
@@ -83,4 +100,44 @@ a.selectTime {
   100%{
     transform: rotate(360deg)
   }
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0 0.75em 0 .75em!important;
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
+  padding: 0.25em 0 0 0!important;
+}
+
+::ng-deep *:focus {
+  outline: none!important;
+}
+
+::ng-deep.mat-form-field-underline {
+  background-color: $primaryColor!important;
+} 
+ 
+::ng-deep.mat-form-field-ripple {
+  background-color: $primaryColor!important;;
+}
+ 
+::ng-deep .mat-form-field-label {
+  color: $primaryColor!important;
+}
+ 
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: rgba(255,255,255,0.6)!important;
+}
+
+::ng-deep .mat-calendar-header {
+  padding-top: 0px!important;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  margin-bottom: -1.34375em!important;
+}
+
+mat-datepicker-toggle {
+  color: $primaryColor!important;
 }

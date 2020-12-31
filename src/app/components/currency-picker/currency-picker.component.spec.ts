@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CurrencyPickerComponent } from './currency-picker.component';
@@ -8,7 +9,10 @@ describe('CurrencyPickerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CurrencyPickerComponent ]
+      declarations: [ CurrencyPickerComponent ],
+      imports: [
+        HttpClientModule
+      ]
     })
     .compileComponents();
   });
@@ -22,4 +26,9 @@ describe('CurrencyPickerComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have first currency index of 103', () => {
+    expect(fixture.componentInstance.firstCurrencyIndex).toBe(103);
+  });
+
 });

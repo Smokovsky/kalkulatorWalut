@@ -1,7 +1,11 @@
-html, body {
+body {
   width: 100%;
   height: 100%;
+  background-image: linear-gradient(130deg, #ffffff, rgb(241, 244, 255));
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
+
 
 *:focus {
   box-shadow: none!important;
