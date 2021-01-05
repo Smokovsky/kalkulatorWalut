@@ -11,7 +11,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let record of exchangeRateHistory">
-          <td><p>{{ record.effectiveDate }}</p></td>
+          <td><p>{{ record.effectiveDate | date: 'dd/MM/yyyy' }}</p></td>
           <td><p>{{ record.exchangeRate | number: '1.6' }}</p></td>
           <td>
             <p>{{ record.change > 0 ? '+' + (record.change | number: '1.6') : (record.change | number: '1.6') }}</p>

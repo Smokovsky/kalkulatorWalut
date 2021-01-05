@@ -1,5 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Currency } from 'src/app/models/currency.model';
+import { DailyResult } from 'src/app/models/dailyResult.model';
+import { Rate } from 'src/app/models/rate.model';
 import { DataProviderService } from 'src/app/services/data-provider.service';
 
 @Component({
@@ -8,24 +11,23 @@ import { DataProviderService } from 'src/app/services/data-provider.service';
   styleUrls: ['./history-viewer.component.scss'],
   providers: [ DatePipe ]
 })
-export class HistoryViewerComponent implements OnInit, OnChanges {
+export class HistoryViewerComponent implements OnChanges {
 
   @Input()
-  firstCurrency: any;
+  firstCurrency: Currency;
   @Input()
-  secondCurrency: any;
+  secondCurrency: Currency;
 
-  startDate: Date = new Date();
+  startDate = new Date();
   endDate = new Date();
-  timePeriods = [30, 60, 90, 180, 365];
-  selectedTimePeriod = 90;
-
-  firstCurrencyHistory = [];
-  secondCurrencyHistory = [];
-  exchangeRateHistory = [];
-
   pickedStartDate: Date;
   pickedEndDate: Date;
+  timePeriods: number[] = [30, 60, 90, 180, 365];
+  selectedTimePeriod: number;
+
+  firstCurrencyHistory: Rate[] = [];
+  secondCurrencyHistory: Rate[] = [];
+  exchangeRateHistory: DailyResult[] = [];
 
   shortTimeRangeError = false;
   exceededTimeRangeError = false;
@@ -36,7 +38,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
 
   constructor(private datePipe: DatePipe,
               private dataProviderService: DataProviderService) {
-    this.startDate.setDate(new Date().getDate() - 90);
+    this.selectLastDays(90);
   }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
@@ -50,9 +52,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void { }
-
-  async getCurrencyHistory(code: string, table: string, startDate: string, endDate: string): Promise<any[]> {
+  async getCurrencyHistory(code: string, table: string, startDate: string, endDate: string): Promise<Rate[]> {
     let response = [];
     if (code !== 'PLN') {
       await this.dataProviderService.getCurrencyHistoryByDate(code, table, startDate, endDate).then(result => {
@@ -60,11 +60,11 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
       });
     } else {
       let start = new Date(startDate);
+      start.setDate(start.getDate() - 1);
       const finish = new Date(endDate);
-
-      if (start <= finish) {
-        while (start <= finish) {
-          response.push({effectiveDate: this.datePipe.transform(start, 'yyyy-MM-dd'), mid: 1});
+      if (start < finish) {
+        while (start < finish) {
+          response.push({effectiveDate: start, rate: 1});
           start = new Date(start.setDate(start.getDate() + 1));
         }
       }
@@ -82,7 +82,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
       this.datePipe.transform(this.startDate, 'yyyy-MM-dd'),
       this.datePipe.transform(this.endDate, 'yyyy-MM-dd')).then(response => {
         this.firstCurrencyHistory = response.map(data => {
-          return {effectiveDate: data.effectiveDate, firstCurrencyRate: data.mid};
+          return {effectiveDate: new Date(data.effectiveDate), rate: data.rate};
         });
       });
     } else if (currency === 2) {
@@ -90,11 +90,13 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
       this.datePipe.transform(this.startDate, 'yyyy-MM-dd'),
       this.datePipe.transform(this.endDate, 'yyyy-MM-dd')).then(response => {
         this.secondCurrencyHistory = response.map(data => {
-          return {effectiveDate: data.effectiveDate, secondCurrencyRate: data.mid};
+          return {effectiveDate: new Date(data.effectiveDate), rate: data.rate};
         });
       });
     }
-    this.combineCurrencyRates();
+    if (this.firstCurrencyHistory.length > 0 && this.secondCurrencyHistory.length > 0) {
+      this.combineCurrencyRates();
+    }
   }
 
   countExchangeRates(): void {
@@ -135,33 +137,31 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
 
   combineCurrencyRates(): void {
     if (this.firstCurrencyHistory.length > 0 && this.secondCurrencyHistory.length > 0) {
-      this.exchangeRateHistory = [];
       let start = new Date(this.startDate);
       const finish = new Date(this.endDate);
 
       if (start <= finish) {
         while (start <= finish) {
           const firstCurrencyDailyRate = this.firstCurrencyHistory.filter(record => {
-            return record.effectiveDate === this.datePipe.transform(start, 'yyyy-MM-dd');
+            return this.datePipe.transform(record.effectiveDate, 'yyyy-MM-dd') === this.datePipe.transform(start, 'yyyy-MM-dd');
           });
           const secondCurrencyDailyRate = this.secondCurrencyHistory.filter(record => {
-            return record.effectiveDate === this.datePipe.transform(start, 'yyyy-MM-dd');
+            return this.datePipe.transform(record.effectiveDate, 'yyyy-MM-dd') === this.datePipe.transform(start, 'yyyy-MM-dd');
           });
 
           if (firstCurrencyDailyRate[0] || secondCurrencyDailyRate[0]) {
-            const resultObject: any = {effectiveDate: new Date()};
-            resultObject.effectiveDate = this.datePipe.transform(start, 'yyyy-MM-dd');
-            if (firstCurrencyDailyRate[0] && firstCurrencyDailyRate[0].firstCurrencyRate) {
-              resultObject.firstCurrencyRate = firstCurrencyDailyRate[0].firstCurrencyRate;
+            const resultObject: DailyResult = {effectiveDate: new Date(start)};
+
+            if (firstCurrencyDailyRate[0] && firstCurrencyDailyRate[0].rate) {
+              resultObject.firstCurrencyRate = firstCurrencyDailyRate[0].rate;
             }
-            if (secondCurrencyDailyRate[0] && secondCurrencyDailyRate[0].secondCurrencyRate) {
-              resultObject.secondCurrencyRate = secondCurrencyDailyRate[0].secondCurrencyRate;
+            if (secondCurrencyDailyRate[0] && secondCurrencyDailyRate[0].rate) {
+              resultObject.secondCurrencyRate = secondCurrencyDailyRate[0].rate;
             }
             this.exchangeRateHistory.push(resultObject);
           }
           start = new Date(start.setDate(start.getDate() + 1));
         }
-
         if (this.firstCurrency.code === 'PLN' || this.secondCurrency.code === 'PLN') {
           const deleteRecords = [];
           this.exchangeRateHistory.forEach((element, index) => {
@@ -181,27 +181,28 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
     }
   }
 
-  async selectLastDays(days: number): Promise<void> {
+  selectLastDays(days: number): void {
     this.selectedTimePeriod = days;
     this.pickedStartDate = null;
     this.pickedEndDate = null;
-    this.exchangeRateHistory = [];
     this.startDate = new Date();
-    this.startDate.setDate(new Date().getDate() - days);
+    this.startDate.setDate(new Date().getDate() - days + 1);
     this.endDate = new Date();
     this.selectTimePeriod();
   }
 
-  async selectTimePeriod(): Promise<void> {
-    this.firstCurrencyHistory = [];
-    this.secondCurrencyHistory = [];
-    await this.saveCurrencyHistory(1);
-    await this.saveCurrencyHistory(2);
-    this.clearErrors();
+  selectTimePeriod(): void {
+    if (this.firstCurrency && this.secondCurrency) {
+      this.firstCurrencyHistory = [];
+      this.secondCurrencyHistory = [];
+      this.saveCurrencyHistory(1);
+      this.saveCurrencyHistory(2);
+      this.clearErrors();
+    }
   }
 
   async datePickerChanged(): Promise<void> {
-    await this.sleep(10);
+    await this.sleep(0);  // prevents from reloading data when re-chosing range and only start date has been clicked yet
     this.clearErrors();
     const minRange = new Date(this.pickedStartDate);
     const maxRange = new Date(this.pickedStartDate);
@@ -215,7 +216,7 @@ export class HistoryViewerComponent implements OnInit, OnChanges {
             this.selectedTimePeriod = 0;
             this.startDate = this.pickedStartDate;
             this.endDate = this.pickedEndDate;
-            await this.selectTimePeriod();
+            this.selectTimePeriod();
 
           } else {
             this.belowMinDateError = true;

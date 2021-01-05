@@ -1,19 +1,23 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
+import { Currency } from 'src/app/models/currency.model';
+import { DailyResult } from 'src/app/models/dailyResult.model';
 
 @Component({
   selector: 'app-chart-view',
   templateUrl: './chart-view.component.html',
-  styleUrls: ['./chart-view.component.scss']
+  styleUrls: ['./chart-view.component.scss'],
+  providers: [ DatePipe ]
 })
-export class ChartViewComponent implements OnInit, OnChanges {
+export class ChartViewComponent implements OnChanges {
   @Input()
-  firstCurrency: any;
+  firstCurrency: Currency;
   @Input()
-  secondCurrency: any;
+  secondCurrency: Currency;
   @Input()
-  exchangeRateHistory: any[];
+  exchangeRateHistory: DailyResult[];
 
   chartReady = false;
   chartType = 'line';
@@ -45,24 +49,22 @@ export class ChartViewComponent implements OnInit, OnChanges {
 
   changesChartData: ChartDataSets[] = [];
 
-  constructor() { }
+  constructor(private datePipe: DatePipe) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.exchangeRateHistory && this.exchangeRateHistory.length > 0 && this.exchangeRateHistory[0].exchangeRate) {
+    if (changes.exchangeRateHistory && this.exchangeRateHistory.length > 0) {
       this.fillChart();
     }
   }
-
-  ngOnInit(): void { }
 
   fillChart(): void {
     const chartData = [{data: [], label: 'Kurs'}];
     const changesChartData = [{data: [], label: 'Zmiana'}];
     const chartLabels = [];
-    this.exchangeRateHistory.forEach((element: any) => {
+    this.exchangeRateHistory.forEach((element: DailyResult) => {
       chartData[0].data.push(element.exchangeRate);
       changesChartData[0].data.push(element.change);
-      chartLabels.push(element.effectiveDate);
+      chartLabels.push(this.datePipe.transform(element.effectiveDate, 'dd-MM-yyyy'));
     });
     this.chartData = chartData;
     this.changesChartData = changesChartData;

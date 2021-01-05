@@ -18,4 +18,10 @@ describe('DataProviderService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should return promises', () => {
+    expect(service.getCurrencyCodesList()).toBeInstanceOf(Promise);
+    expect(service.getCurrencyRate('EUR', 'A')).toBeInstanceOf(Promise);
+    expect(service.getCurrencyHistoryByDate('EUR', 'A', '2019-01-01', '2019-02-02')).toBeInstanceOf(Promise);
+  });
 });

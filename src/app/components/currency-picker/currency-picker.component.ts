@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Currency } from 'src/app/models/currency.model';
 import { DataProviderService } from 'src/app/services/data-provider.service';
 
 @Component({
@@ -7,7 +8,7 @@ import { DataProviderService } from 'src/app/services/data-provider.service';
   styleUrls: ['./currency-picker.component.scss']
 })
 export class CurrencyPickerComponent implements OnInit {
-  currencyList: any[];
+  currencyList: Currency[];
 
   firstCurrencyIndex: number;
   firstCurrencyRate: number;
@@ -20,9 +21,9 @@ export class CurrencyPickerComponent implements OnInit {
   secondCurrencyAmount = 0;
 
   @Output()
-  firstCurrency: EventEmitter<{code: string, table: string}> = new EventEmitter();
+  firstCurrency: EventEmitter<Currency> = new EventEmitter();
   @Output()
-  secondCurrency: EventEmitter<{code: string, table: string}> = new EventEmitter();
+  secondCurrency: EventEmitter<Currency> = new EventEmitter();
 
   exchangeRate: number;
 
@@ -32,9 +33,7 @@ export class CurrencyPickerComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.dataProviderService.getCurrencyCodesList().then(data => {
-      this.currencyList = data;
-    });
+    this.currencyList = await this.dataProviderService.getCurrencyCodesList();
     this.currencyList.sort((a, b) => {
       return a.code > b.code ? 1 : -1;
     });
@@ -51,13 +50,13 @@ export class CurrencyPickerComponent implements OnInit {
   * @param currency: accepts value 1 or 2, depends on which currency is to change
   * @Param index: index of currency in currencyList
   */
-  async onClickCurrencyCode(currency: number, index: number): Promise<void> {
+  onClickCurrencyCode(currency: number, index: number): void {
     if (currency === 1) {
       this.firstCurrencyIndex = index;
     } else if (currency === 2) {
       this.secondCurrencyIndex = index;
     }
-    await this.getCurrency(currency, index);
+    this.getCurrency(currency, index);
     this.countCurrencyAmount(currency === 1 ? 2 : 1);
   }
 
@@ -98,11 +97,9 @@ export class CurrencyPickerComponent implements OnInit {
   */
    emitCurrency(currency: number): void {
     if (currency === 1) {
-      this.firstCurrency.emit({code: this.currencyList[this.firstCurrencyIndex].code,
-                              table: this.currencyList[this.firstCurrencyIndex].table});
+      this.firstCurrency.emit(this.currencyList[this.firstCurrencyIndex]);
     } else if (currency === 2) {
-      this.secondCurrency.emit({code: this.currencyList[this.secondCurrencyIndex].code,
-                               table: this.currencyList[this.secondCurrencyIndex].table});
+      this.secondCurrency.emit(this.currencyList[this.secondCurrencyIndex]);
     }
   }
 

@@ -1,25 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Currency } from 'src/app/models/currency.model';
 
 @Component({
   selector: 'app-page',
   templateUrl: './page.component.html',
   styleUrls: ['./page.component.scss']
 })
-export class PageComponent implements OnInit {
-  firstCurrency: any;
-  secondCurrency: any;
+export class PageComponent {
+  firstCurrency: Currency;
+  secondCurrency: Currency;
 
   constructor() { }
 
-  ngOnInit(): void {
-
-  }
-
-  onChangeFirstCurrency(currency: any): void {
+  onChangeFirstCurrency(currency: Currency): void {
     this.firstCurrency = currency;
   }
 
-  onChangeSecondCurrency(currency: any): void {
+  onChangeSecondCurrency(currency: Currency): void {
     this.secondCurrency = currency;
   }
 

@@ -27,8 +27,8 @@
   <div class="col-12">
     <div class="d-table mx-auto text-center infoPanel" *ngIf="currencyList">
       <p>Kurs wymiany: <b>{{ exchangeRate | number: '1.1-6' }}</b></p>
-      <p><b>{{ currencyList[firstCurrencyIndex].code }} - {{ currencyList[firstCurrencyIndex].currency }}</b> - ostatni notowany kurs: {{ firstCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}</p>
-      <p><b>{{ currencyList[secondCurrencyIndex].code }} -  {{ currencyList[secondCurrencyIndex].currency }}</b> - ostatni notowany kurs: {{ secondCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}</p>
+      <p><b>{{ currencyList[firstCurrencyIndex].code }} - {{ currencyList[firstCurrencyIndex].name }}</b> - ostatni notowany kurs: {{ firstCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}</p>
+      <p><b>{{ currencyList[secondCurrencyIndex].code }} -  {{ currencyList[secondCurrencyIndex].name }}</b> - ostatni notowany kurs: {{ secondCurrencyEffectiveDate | date: 'YYYY-MM-dd' }}</p>
     </div>
   </div>
 </div>

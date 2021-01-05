@@ -1,28 +1,28 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Currency } from 'src/app/models/currency.model';
+import { DailyResult } from 'src/app/models/dailyResult.model';
 
 @Component({
   selector: 'app-data-view',
   templateUrl: './data-view.component.html',
   styleUrls: ['./data-view.component.scss']
 })
-export class DataViewComponent implements OnInit, OnChanges {
+export class DataViewComponent implements OnChanges {
   @Input()
-  firstCurrency: any;
+  firstCurrency: Currency;
   @Input()
-  secondCurrency: any;
+  secondCurrency: Currency;
   @Input()
-  exchangeRateHistory: any[];
+  exchangeRateHistory: DailyResult[];
 
   dataReady = false;
 
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.exchangeRateHistory && this.exchangeRateHistory.length > 0 && this.exchangeRateHistory[0].exchangeRate) {
+    if (changes.exchangeRateHistory && this.exchangeRateHistory.length > 0) {
       this.dataReady = true;
     }
   }
-
-  ngOnInit(): void { }
 
 }
